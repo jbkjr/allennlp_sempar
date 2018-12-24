@@ -1,0 +1,58 @@
+{
+  "dataset_reader": {
+    "type": "seq2seq",
+  },
+  "train_data_path": "data/jobqueries/jobs.train",
+  "validation_data_path": "data/jobqueries/jobs.val",
+  "model": {
+    "type": "simple_seq2seq",
+    "source_embedder": {
+      "tokens": {
+        "type": "embedding",
+        "vocab_namespace": "tokens",
+        "embedding_dim": 100,
+        "trainable": true
+      }
+    },
+    "encoder": {
+      "type": "lstm",
+      "input_size": 100,
+      "hidden_size": 200,
+      "num_layers": 1,
+      "dropout": 0.4,
+      "bidirectional": true
+    },
+    "attention": {
+      "type": "bilinear",
+      "vector_dim": 400,
+      "matrix_dim": 400
+    },
+    "target_embedding_dim": 100,
+    "beam_size": 5,
+    "max_decoding_steps": 60,
+    "use_bleu": true
+  },
+  "iterator": {
+    "type": "bucket",
+    "padding_noise": 0.0,
+    "batch_size" : 16,
+    "sorting_keys": [["target_tokens", "num_tokens"]]
+  },
+  "trainer": {
+    "optimizer": {
+      "type": "adam",
+      "lr": 0.01,
+      "weight_decay": 1e-7
+    },
+    "learning_rate_scheduler": {
+      "type": "noam",
+      "warmup_steps": 500,
+      "model_size": 200
+    },
+    "num_epochs": 100,
+    "patience" : 5,
+    "cuda_device": 0,
+    "should_log_learning_rate": true,
+    "should_log_parameter_statistics": false
+  }
+}
