@@ -1,15 +1,27 @@
 {
   "dataset_reader": {
-    "type": "seq2seq",
+    "type": "my_seq2seq",
+    "source_token_indexers": {
+      "source_tokens": {
+        "type": "single_id",
+        "namespace": "source_tokens"
+      }
+    },
+    "target_token_indexers": {
+      "tokens": {
+        "type": "single_id",
+        "namespace": "tokens"
+      }
+    },
   },
   "train_data_path": "data/geoquery/geo.train",
   "validation_data_path": "data/geoquery/geo.val",
   "model": {
-    "type": "simple_seq2seq",
+    "type": "seq2seq",
     "source_embedder": {
-      "tokens": {
+      "source_tokens": {
         "type": "embedding",
-        "vocab_namespace": "tokens",
+        "vocab_namespace": "source_tokens",
         "embedding_dim": 100,
         "trainable": true
       }
@@ -19,7 +31,6 @@
       "input_size": 100,
       "hidden_size": 200,
       "num_layers": 1,
-      "dropout": 0.4,
       "bidirectional": true
     },
     "attention": {
@@ -29,7 +40,7 @@
     },
     "target_embedding_dim": 100,
     "beam_size": 5,
-    "max_decoding_steps": 75,
+    "max_decoding_steps": 100,
     "use_bleu": true
   },
   "iterator": {
@@ -41,18 +52,18 @@
   "trainer": {
     "optimizer": {
       "type": "adam",
-      "lr": 0.03,
-      "weight_decay": 1e-6
+      "lr": 0.01
     },
     "learning_rate_scheduler": {
       "type": "noam",
       "warmup_steps": 800,
       "model_size": 200
     },
-    "num_epochs": 80,
-    "patience" : 5,
+    "num_epochs": 150,
+    "patience" : 30,
     "cuda_device": 0,
     "should_log_learning_rate": true,
-    "should_log_parameter_statistics": false
+    "should_log_parameter_statistics": false,
+    "validation_metric": "+seq_acc"
   }
 }

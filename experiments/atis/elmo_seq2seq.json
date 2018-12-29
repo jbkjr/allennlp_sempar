@@ -1,24 +1,30 @@
 {
   "dataset_reader": {
-    "type": "seq2seq",
+    "type": "my_seq2seq",
     "source_token_indexers": {
-      "tokens": {
+      "source_tokens": {
         "type": "single_id",
-        "namespace": "tokens"
+        "namespace": "source_tokens"
       },
       "elmo": {
         "type": "elmo_characters"
+      }
+    },
+    "target_token_indexers": {
+      "tokens": {
+        "type": "single_id",
+        "namespace": "tokens"
       }
     },
   },
   "train_data_path": "data/atis/atis.train",
   "validation_data_path": "data/atis/atis.val",
   "model": {
-    "type": "simple_seq2seq",
+    "type": "seq2seq",
     "source_embedder": {
-      "tokens": {
+      "source_tokens": {
         "type": "embedding",
-        "vocab_namespace": "tokens",
+        "vocab_namespace": "source_tokens",
         "embedding_dim": 100,
         "pretrained_file": "https://s3-us-west-2.amazonaws.com/allennlp/datasets/glove/glove.6B.100d.txt.gz",
         "trainable": true
@@ -28,7 +34,7 @@
         "options_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_options.json",
         "weight_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5",
         "do_layer_norm": false,
-        "dropout": 0.5
+        "dropout": 0.0
       }
     },
     "encoder": {
@@ -36,7 +42,6 @@
       "input_size": 1124,
       "hidden_size": 200,
       "num_layers": 1,
-      "dropout": 0.4,
       "bidirectional": true
     },
     "attention": {
@@ -65,10 +70,11 @@
       "warmup_steps": 1000,
       "model_size": 200
     },
-    "num_epochs": 60,
-    "patience" : 5,
+    "num_epochs": 150,
+    "patience" : 30,
     "cuda_device": 1,
     "should_log_learning_rate": true,
-    "should_log_parameter_statistics": false
+    "should_log_parameter_statistics": false,
+    "validation_metric": "+seq_acc"
   }
 }
